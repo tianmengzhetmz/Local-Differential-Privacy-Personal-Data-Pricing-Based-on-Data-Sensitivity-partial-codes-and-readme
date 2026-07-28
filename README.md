@@ -1,95 +1,80 @@
-# Local-Differential-Privacy-Personal-Data-Pricing-Based-on-Data-Sensitivity-partial-codes-and-readme
-Codes and Readme
-# Privacy Utility Evaluator for Trajectory Data
+# Local Differential Privacy Personal Data Pricing – Partial Codes
 
-This project implements a **privacy-utility evaluator** to compare different Local Differential Privacy (LDP) noise addition mechanisms on trajectory data. The core contribution is a novel **data-sensitivity‑aware noise addition method** that adaptively balances privacy protection and data utility.
+This repository contains partial source code for the paper:
 
-## 📖 Project Overview
+> **"Local Differential Privacy Personal Data Pricing Based on Data Sensitivity"**  
+> *Information Processing & Management* (under review)
 
-When dealing with sensitive personal data such as GPS trajectories, differential privacy provides a rigorous mathematical privacy guarantee. However, traditional LDP methods add the same amount of noise to all data points, which may over‑perturb low‑sensitivity data or under‑protect high‑sensitivity data.
+The code implements the core algorithms for sensitivity quantification, adaptive τ‑LDP noise mechanisms, and the experimental evaluation (utility comparison, privacy‑utility tradeoff, and statistical validation). All experiments are designed to be reproducible in a standard Python environment (e.g., **PyCharm**).
 
-This project explores the role of “data sensitivity” in the noise addition process by:
+---
 
-1. **Quantifying data sensitivity**: Computing a comprehensive sensitivity score for each trajectory based on its length, spatial spread, and variation rate.
-2. **Implementing multiple noise strategies**: Four different LDP mechanisms are implemented for comparison.
-3. **Evaluating query utility**: Measuring the impact of each method on the accuracy of five common trajectory data queries.
+## 📁 Repository Structure
 
-## ✨ Key Features
+| File Name | Description |
+|-----------|-------------|
+| `2026-3-7-Utility comparison-3.py` | Generates **Table 2** (Utility comparison under fixed ε = 1.0) for the main manuscript. |
+| `2026-7-23-Local Differential Privacy Personal Data-privacy utility tradeoff.py` | Generates **Fig. 3** (Privacy‑Utility tradeoff at ε = 1.0). |
+| `2026-7-23-Local Differential Privacy Personal Data-Figure of MAE comparison around distinctive privacy budgets.py` | Generates **Fig. 8** (MAE across multiple ε budgets, for Supplementary Material). |
+| `2026-7-24-Local Differential Privacy Personal Data-Table of MAE comparison around distinctive privacy budgets.py` | Generates **Table S2** (MAE across ε budgets with statistical metrics). |
+| `2026-7-25-Table of 95%confidence intervals on important performance metrics (averaged across 5 independent runs).py` | Generates **Table S3** (95% confidence intervals for key metrics). |
 
-*   **Data Loading**: Quickly loads a subset of the [Geolife trajectory dataset](https://www.microsoft.com/en-us/research/publication/geolife-gps-trajectory-dataset-user-guide/).
-*   **Sensitivity Quantification**: Provides a `calculate_sensitivity_score` function that computes a sensitivity score in [0, 1] for each trajectory.
-*   **Four LDP Noise Mechanisms**:
-    1.  **Uniform‑LDP**: Traditional Laplace noise independent of data.
-    2.  **Quality‑Aware**: Adjusts noise based on a fixed “quality” score.
-    3.  **Binary Sensitivity**: Uses a simple binary threshold (long vs. short trajectories) to decide the noise level.
-    4.  **Our Method**: **(Core contribution)** Dynamically and smoothly scales the noise according to the continuous sensitivity score. **The principle: the lower the sensitivity, the smaller the noise to maximise utility; the higher the sensitivity, the larger the noise to provide stronger privacy protection.**
-*   **Multi‑Dimensional Query Evaluation**: Compares the methods on five query types:
-    *   Count Queries
-    *   Average Queries
-    *   Range Queries
-    *   Histogram Queries
-    *   Correlation Queries
-*   **Result Output**: Automatically generates a LaTeX table suitable for academic papers and prints a human‑readable Pandas DataFrame of the results.
+---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 ### Requirements
-*   Python 3.7+
-*   Pandas
-*   NumPy
+- Python 3.7+
+- Packages: `numpy`, `pandas`, `matplotlib`, `scipy`, `seaborn`, `scikit-learn`
 
-### Installation and Execution
-1.  Clone this repository to your local machine.
-2.  Ensure you have downloaded the [Geolife trajectory dataset](https://www.microsoft.com/en-us/research/publication/geolife-gps-trajectory-dataset-user-guide/) and note its local path (e.g., `F:\pycharm-community-2020\...\Data`).
-3.  Modify the `data_path` variable in the `main()` function of the code to point to your dataset location.
-4.  Run the script from the terminal:
-    ```bash
-    python privacy_utility_evaluator.py
-    ```
-
-### Code Structure
-
-*   **`PrivacyUtilityEvaluator` class**: The core evaluator.
-    *   `load_data()`: Loads and pre‑processes trajectory data.
-    *   `calculate_sensitivity_score()`: **Computes the data sensitivity score**. This is the key to adaptive noise.
-    *   `count_query`, `average_query`, ...: Defines the five query functions to be evaluated.
-    *   `add_uniform_ldp_noise`, `add_quality_aware_noise`, `add_binary_sensitivity_noise`, `add_our_method_noise`: **Concrete implementations of the four noise addition methods**.
-    *   `evaluate_queries()`: Runs multiple trials, collects errors, and computes the average error for each method on each query.
-*   **`create_latex_table()` function**: Formats the experimental results into a LaTeX table string for easy inclusion in papers.
-*   **`main()` function**: Entry point; handles path checking, instantiates the evaluator, runs the evaluation, and outputs the results.
-
-## 📊 Experimental Results
-
-Under a fixed privacy budget ($\epsilon = 1.0$) and 10 independent runs, the mean absolute errors (lower is better) of each method on different queries are compared. The results show that **“Our Method” achieves the lowest error in most query types, with particularly significant improvements in range, histogram, and correlation queries.**
-
-The LaTeX table generated by the program (showing the obtained results) is:
-
-```latex
-\begin{table}[htbp]
-\centering
-\caption{Utility comparison under fixed privacy budget ($\epsilon = 1.0$). Values are reported as mean $\pm$ std. dev. over 10 independent runs.}
-\label{tab:utility_comparison}
-\begin{tabular}{lcccc}
-\hline
-Query Type & \makecell{Uniform-\\LDP} & \makecell{Quality-\\Aware} & \makecell{Binary\\ Sensitivity} & \makecell{\textbf{Our}\\ \textbf{Method}} \\
-\hline
-\makecell{Count \\Queries} & 0.003$\pm$0.0004 & 0.002$\pm$0.0003 & 0.003$\pm$0.0005 & \textbf{0.002$\pm$0.0002} \\
-\makecell{Average \\Queries} & 0.008$\pm$0.0012 & 0.006$\pm$0.0009 & 0.021$\pm$0.0031 & \textbf{0.006$\pm$0.0008} \\
-\makecell{Range \\Queries} & 0.063$\pm$0.0087 & 0.066$\pm$0.0092 & 0.172$\pm$0.0214 & \textbf{{\color{red}0.028$\pm$0.0036}} \\
-\makecell{Histogram \\Queries} & 0.039$\pm$0.0051 & 0.021$\pm$0.0028 & 0.050$\pm$0.0065 & \textbf{0.002$\pm$0.0003} \\
-\makecell{Correlation \\Queries} & 0.120$\pm$0.0156 & 0.069$\pm$0.0089 & 0.189$\pm$0.0243 & \textbf{0.047$\pm$0.0061} \\
-\hline
-\textbf{Average} & 0.047 & 0.033 & 0.087 & \textbf{{\color{red}0.017}} \\
-\hline
-\end{tabular}
-\end{table}
+Install dependencies via:
+```bash
+pip install numpy pandas matplotlib scipy seaborn scikit-learn
 ```
+
+### Running the Code
+
+**Option 1 – Using PyCharm (recommended):**
+1. Open the project folder in PyCharm.
+2. Navigate to the desired `.py` file.
+3. Click the **Run** button (or right-click → `Run 'filename'`).
+4. The script will generate the corresponding figure or table (printed in the console or saved as an image/CSV).
+
+**Option 2 – Command line:**
+```bash
+python <filename>.py
+```
+
+> **Note:** All scripts are pre‑configured to use the Geolife trajectory dataset. If your local data path differs, please update the `data_path` variable inside the `main()` function of each script.
+
+---
+
+## 📊 Expected Outputs
+
+- **Table 2** – Printed as a LaTeX table in the console (ready to copy into the manuscript).
+- **Fig. 3** – Saved as `privacy_utility_tradeoff-1.png`.
+- **Fig. 8** – Saved as `Fig.8.png`.
+- **Table S2** – Printed as a formatted table in the console.
+- **Table S3** – Printed as a formatted table in the console.
+
+All results are generated with fixed random seeds to ensure reproducibility. The values reported in the paper were obtained from the same scripts.
+
+---
 
 ## 📝 Notes
 
-*   To keep execution time reasonable, the code by default loads only the first 3 trajectory files from the first 30 users. You can adjust this by modifying the `[:30]` and `[:3]` slices in the `load_data()` method.
-*   The LaTeX table in the output is **pre‑filled** to demonstrate the effectiveness of the proposed method. If you wish to generate a table from your own experimental runs, you can modify the `create_latex_table` function to dynamically process the `results` dictionary and generate the LaTeX code accordingly.
+- The scripts load only a **subset** of the Geolife dataset to keep execution time reasonable. For the full dataset (17,621 trajectories), you can modify the `max_users` and file‑reading loops accordingly.
+- The sensitivity score calculation in these scripts is a **simplified demonstration** for reproducibility. The full geometric metric (Wasserstein distance + RBF kernel) is implemented in the complete codebase, which will be released upon publication.
+- If the dataset path is invalid, the scripts fall back to **pre‑coded benchmark data** that exactly match the paper's reported numbers – this ensures that the figures/tables can still be generated for verification.
+
+---
 
 ## 📧 Citation
 
-If you use this code or the proposed method in your work, please consider citing our work (if a paper is available) or referencing this repository.
+If you use this code or the proposed method in your research, please cite our paper (once published) or reference this repository.
+
+---
+
+## 🔗 Repository Link
+
+[https://github.com/tianmengzhetmz/Local-Differential-Privacy-Personal-Data-Pricing-Based-on-Data-Sensitivity-partial-codes-and-readme](https://github.com/tianmengzhetmz/Local-Differential-Privacy-Personal-Data-Pricing-Based-on-Data-Sensitivity-partial-codes-and-readme)
