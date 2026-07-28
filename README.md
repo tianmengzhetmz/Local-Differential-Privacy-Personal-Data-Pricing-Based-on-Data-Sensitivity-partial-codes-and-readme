@@ -78,3 +78,4 @@ If you use this code or the proposed method in your research, please cite our pa
 ## 🔗 Repository Link
 
 [https://github.com/tianmengzhetmz/Local-Differential-Privacy-Personal-Data-Pricing-Based-on-Data-Sensitivity-partial-codes-and-readme](https://github.com/tianmengzhetmz/Local-Differential-Privacy-Personal-Data-Pricing-Based-on-Data-Sensitivity-partial-codes-and-readme)
+> **Configuration:** All scripts now read the data path from a centralized `config.py` file. To point to your local dataset, simply edit the `DATA_PATH` variable in `config.py`. If the path is invalid, scripts will automatically fall back to pre‑coded benchmark data matching the paper's reported numbers.
